@@ -88,8 +88,12 @@ public class VanderBlameTask extends DefaultTask {
 
 		ProcessBuilder newBuilder;
 		if (os.contains("windows")) {
+			System.out.println("HIT WINDOWS : ");
+			System.out.println("PROJ ROOT : " + projectRootPath);
+			System.out.println("FILE PATH AND NAME : " + filePathAndName );
 			newBuilder = new ProcessBuilder( "cmd" );
 		} else {
+			System.out.println("HIT UNIX");
 			newBuilder = new ProcessBuilder( "/bin/bash" );
 		}
 		//init shell
@@ -105,7 +109,7 @@ public class VanderBlameTask extends DefaultTask {
         BufferedWriter p_stdin = new BufferedWriter(new OutputStreamWriter(newP.getOutputStream()));
         
         try {
-            //Execution
+            //Execution        	
 		    p_stdin.write("cd " + projectRootPath);
 		    p_stdin.newLine();
 		    p_stdin.flush();
@@ -135,21 +139,76 @@ public class VanderBlameTask extends DefaultTask {
 	    
 	    while (s.hasNextLine()) {
 	    	String line = s.nextLine();
+	    	//Because windows is stupid and wants to stick this crap in the 
+	    	//output ("Microsoft Windows [Version 6.1.7601]\nCopyright (c) 
+	    	//2009 Microsoft Corporation.  All rights reserved.") we will now 
+	    	//only take lines that don't start with that as that's 
+	    	//how all response start when using cmd through java..... fuck you 
+	    	//windows for making this dirty.
+	    	//
+	    	//An example of what we are not looking for is "Microsoft Windows 
+	    	//[Version 6.1.7601]" or "Copyright (c) 2009 Microsoft Corporation.  
+	    	//All rights reserved.", otherwise include the line.
 	    	
-			String[] guiltyParty = line.split("\\(", 2);
-			String[] tempArr = guiltyParty[1].split(" ");
-			String name = tempArr[0];
-	    	
-			String[] lineOfCode = line.split("\\)", 2);
-			tempArr = lineOfCode[0].split(" ");
-			Integer lineNum = new Integer(tempArr[tempArr.length-1]);
-			
-			linedFile.put(lineNum, lineOfCode[1]);
-	    	
-			for (Violation v : file.getViolation()) {
-				if (v.getBeginline() == lineNum.intValue()) {
-					v.setGuiltyParty(name);
-					break;
+	    	//Here is some sample output if you're in windows
+	    	/*
+				Microsoft Windows [Version 6.1.7601]
+				Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+				
+				X:\workspace\VanderBlameTest>cd X:\workspace\VanderBlameTest/
+				
+				X:\workspace\VanderBlameTest>git blame X:\workspace\VanderBlameTest\src\main\jav
+				a\org\gradle\Person.java
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  1) package org.gradle;
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  2)
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  3)
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  4) public class Person {
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  5)     private final String name;
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  6)
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  7)     private String notused;
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  8)
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400  9)     public Person(String name) {
+				
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 10)         this.name = name;
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 11)
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 12)         if (true) {
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 13)                 System.out.print
+				ln("Should get picked up");
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 14)         }
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 15)     }
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 16)
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 17)     public String getName() {
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 18)         if (2%0 == 0)
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 19)                 System.out.print
+				ln("Should also get picked up");
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 20)         return name;
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 21)     }
+				^3b6686d (mazukas 2015-07-25 22:55:26 -0400 22) }
+	    	 */
+	    	System.out.println(line);
+	    	//Don't hate me code gods, I will try and find a way to clean this up
+			if (	line != null && 
+					!line.trim().equals("") && 
+					!line.startsWith("Microsoft Windows") && 
+					!line.startsWith("Copyright") && 
+					!line.startsWith(projectRootPath.substring(0, projectRootPath.length()-1)) && 
+					!line.contains(projectRootPath) && 
+					!line.contains(filePathAndName)) {
+				String[] guiltyParty = line.split("\\(", 2);
+				String[] tempArr = guiltyParty[1].split(" ");
+				String name = tempArr[0];
+				
+				String[] lineOfCode = line.split("\\)", 2);
+				tempArr = lineOfCode[0].split(" ");
+				Integer lineNum = new Integer(tempArr[tempArr.length-1]);
+				
+				linedFile.put(lineNum, lineOfCode[1]);
+		    	
+				for (Violation v : file.getViolation()) {
+					if (v.getBeginline() == lineNum.intValue()) {
+						v.setGuiltyParty(name);
+						break;
+					}
 				}
 			}
 	    }

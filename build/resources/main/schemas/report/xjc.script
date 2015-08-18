@@ -1,2 +1,0 @@
-Run this to generate the required code in the same directory as this file:
-xjc -d ../../../java -p gov.sbs.plugins.domain -b reportBind.xml report.xsd -extension -Xinject-code
