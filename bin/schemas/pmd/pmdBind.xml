@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jaxb:bindings	version="2.1"
+				xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+				xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+				xmlns:ci="http://jaxb.dev.java.net/plugin/code-injector"
+				jaxb:extensionBindingPrefixes="ci">
+
+
+
+	<jaxb:bindings schemaLocation="pmd.xsd" node="/xs:schema">
+		<jaxb:bindings node="xs:element[@name='pmd']/xs:complexType/xs:sequence/xs:element[@name='file']/xs:complexType/xs:sequence/xs:element[@name='violation']/xs:complexType">
+	        <ci:code>
+	        	@javax.xml.bind.annotation.XmlTransient
+	            private String guiltyParty;
+	            
+	            public String getGuiltyParty() {
+	            	return guiltyParty;
+	            }
+	            
+	            public void setGuiltyParty(String gp) {
+	            	this.guiltyParty = gp;
+	            }
+	            
+	            @javax.xml.bind.annotation.XmlTransient
+				private String code;
+	            
+	            public String getCode() {
+	            	return code;
+	            }
+	            
+	            public void setCode(String code) {
+	            	this.code = code;
+	            }
+	            
+	            @Override
+	            public String toString() {
+	            	StringBuilder sb = new StringBuilder();
+	            	sb.append("guiltyParty : " + guiltyParty);
+	            	sb.append("\nbeginline : " + beginline);
+	            	sb.append("\nendline : " + endline);
+	            	sb.append("\nbegincolumn : " + begincolumn);
+	            	sb.append("\nendcolumn : " + endcolumn);
+	            	sb.append("\nrule : " + rule);
+	            	sb.append("\nruleset : " + ruleset);
+	            	sb.append("\npackage : " + _package);
+	            	sb.append("\nclazz : " + clazz);
+	            	sb.append("\nexternalInfoUrl : " + externalInfoUrl);
+	            	sb.append("\npriority : " + priority);
+	            	sb.append("\nvalue : " + value);
+	            	sb.append("\ncode : " + code);
+	            	return sb.toString();
+	            }
+	        </ci:code>
+		</jaxb:bindings>
+	</jaxb:bindings>
+
+</jaxb:bindings>
