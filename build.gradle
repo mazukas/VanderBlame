@@ -21,7 +21,7 @@ apply plugin: 'maven'
 
 
 
-group = 'gov.sbs.plugins'
+group = 'gov.abs.sbs.plugins'
 version = '1.0'
 
 uploadArchives {
