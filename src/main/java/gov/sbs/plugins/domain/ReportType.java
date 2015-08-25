@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 public enum ReportType {
 
     PMD,
+    FORTIFY,
     FIND_BUGS;
 
     public String value() {

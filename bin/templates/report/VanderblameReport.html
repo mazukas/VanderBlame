@@ -5,11 +5,11 @@
 			function changeTab(tab) {
 				var mainTab = document.getElementById('MAIN_tab');
 				var pmdTab = document.getElementById('PMD_tab');
-				var findBugsTab = document.getElementById('FIND_BUGS_tab');
+				var fortifyTab = document.getElementById('FORTIFY_tab');
 				
 				var mainBody = document.getElementById('MAIN_body');
 				var pmdBody = document.getElementById('PMD_body');
-				var findBugsBody = document.getElementById('FIND_BUGS_body');
+				var fortifyBody = document.getElementById('FORTIFY_body');
 				
 				if (tab == 'MAIN') {
 					mainTab.className = "tab tabSelected tabFirst";
@@ -27,12 +27,12 @@
 					pmdBody.className = "tabBody tabBodyUnselected";
 				}
 				
-				if (tab == 'FIND_BUGS') {
-					findBugsTab.className = "tab tabSelected tabLast";
-					findBugsBody.className = "tabBody tabBodySelected";
+				if (tab == 'FORTIFY') {
+					fortifyTab.className = "tab tabSelected tabLast";
+					fortifyBody.className = "tabBody tabBodySelected";
 				} else {
-					findBugsTab.className = "tab tabLast";
-					findBugsBody.className = "tabBody tabBodyUnselected";
+					fortifyTab.className = "tab tabLast";
+					fortifyBody.className = "tabBody tabBodyUnselected";
 				}
 			}
 		</script>
@@ -82,9 +82,9 @@
 	<body>
 		<div id="MAIN_tab" class="tab tabSelected tabFirst" onclick="changeTab('MAIN')">Main</div>
 		<div id="PMD_tab" class="tab" onclick="changeTab('PMD')">PMD</div>
-		<div id="FIND_BUGS_tab" class="tab tabLast" onclick="changeTab('FIND_BUGS')">Find Bugs</div>
+		<div id="FORTIFY_tab" class="tab tabLast" onclick="changeTab('FORTIFY')">Fortify</div>
 		<div id="MAIN_body" class="tabBody tabBodySelected">{{MAIN_PLACEHOLDER}}</div>
 		<div id="PMD_body" class="tabBody tabBodyUnselected">{{PMD_PLACEHOLDER}}</div>
-		<div id="FIND_BUGS_body" class="tabBody tabBodyUnselected">{{FIND_BUGS_PLACEHOLDER}}</div>
+		<div id="FORTIFY_body" class="tabBody tabBodyUnselected">{{FORTIFY_PLACEHOLDER}}</div>
 	</body>
 </html>

@@ -56,9 +56,6 @@ public class VanderBlameTask extends DefaultTask {
         	runGitBlame(projectRootPath, file.getName().replace(projectRootPath, ""), file);
         }
         
-        //Uncomment this for testing purposes only
-        //results.getFile().get(0).getViolation().get(1).setGuiltyParty("ericsond");
-        
         generateReport( results );
     }
     
@@ -263,11 +260,11 @@ public class VanderBlameTask extends DefaultTask {
 			}
 		}
 		
-		//Now do the find bugs report
-		//For now we do nothing
-		Subreport findBugsReport = new Subreport();
-		findBugsReport.setName(ReportType.FIND_BUGS);
-		masterReport.getSubreport().add(findBugsReport);
+		//Now do the Fortify report
+		//For now we do nothing, this is just a place holder
+		Subreport fortifyReport = new Subreport();
+		fortifyReport.setName(ReportType.FORTIFY);
+		masterReport.getSubreport().add(fortifyReport);
 		
 		generateReport(masterReport);
 

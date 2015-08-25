@@ -9,17 +9,17 @@ import java.util.Date;
 
 public class ViewGenerator {
 	
-	private static String page = "<html><head><title>Vanderblame Code Quality Tool</title><script type=\"text/javascript\">function changeTab(tab) {var mainTab = document.getElementById('MAIN_tab');var pmdTab = document.getElementById('PMD_tab');var findBugsTab = document.getElementById('FIND_BUGS_tab');var mainBody = document.getElementById('MAIN_body');var pmdBody = document.getElementById('PMD_body');var findBugsBody = document.getElementById('FIND_BUGS_body');if (tab == 'MAIN') {mainTab.className = \"tab tabSelected tabFirst\";mainBody.className = \"tabBody tabBodySelected\";} else {mainTab.className = \"tab tabFirst\";mainBody.className = \"tabBody tabBodyUnselected\";}if (tab == 'PMD') {pmdTab.className = \"tab tabSelected\";pmdBody.className = \"tabBody tabBodySelected\";} else {pmdTab.className = \"tab\";pmdBody.className = \"tabBody tabBodyUnselected\";}if (tab == 'FIND_BUGS') {findBugsTab.className = \"tab tabSelected tabLast\";findBugsBody.className = \"tabBody tabBodySelected\";} else {findBugsTab.className = \"tab tabLast\";findBugsBody.className = \"tabBody tabBodyUnselected\";}}</script><style type=\"text/css\">.tab {border-left: 1px solid #28288A;border-right: 1px solid #28288A;border-top: 1px solid #28288A;height: 30px;width: 100px;text-align: center;vertical-align: middle;display: table-cell;cursor: pointer;}.tabFirst {border-radius: 5px 0px 0px 0px;}.tabLast {border-radius: 0px 5px 0px 0px;}.tabSelected {background-color: #28288A;color: white;}.tabBody {width: 100%;height: 90%;border: 1px solid #28288A;padding: 5px;}.tabBodySelected {display: block;}.tabBodyUnselected {display: none;}</style></head><body><div id=\"MAIN_tab\" class=\"tab tabSelected tabFirst\" onclick=\"changeTab('MAIN')\">Main</div><div id=\"PMD_tab\" class=\"tab\" onclick=\"changeTab('PMD')\">PMD</div><div id=\"FIND_BUGS_tab\" class=\"tab tabLast\" onclick=\"changeTab('FIND_BUGS')\">Find Bugs</div><div id=\"MAIN_body\" class=\"tabBody tabBodySelected\">{{MAIN_PLACEHOLDER}}</div><div id=\"PMD_body\" class=\"tabBody tabBodyUnselected\">{{PMD_PLACEHOLDER}}</div><div id=\"FIND_BUGS_body\" class=\"tabBody tabBodyUnselected\">{{FIND_BUGS_PLACEHOLDER}}</div></body></html>";
+	private static String page = "<html><head><title>Vanderblame Code Quality Tool</title><script type=\"text/javascript\">function changeTab(tab) {var mainTab = document.getElementById('MAIN_tab');var pmdTab = document.getElementById('PMD_tab');var fortifyTab = document.getElementById('FORTIFY_tab');var mainBody = document.getElementById('MAIN_body');var pmdBody = document.getElementById('PMD_body');var fortifyBody = document.getElementById('FORTIFY_body');if (tab == 'MAIN') {mainTab.className = \"tab tabSelected tabFirst\";mainBody.className = \"tabBody tabBodySelected\";} else {mainTab.className = \"tab tabFirst\";mainBody.className = \"tabBody tabBodyUnselected\";}if (tab == 'PMD') {pmdTab.className = \"tab tabSelected\";pmdBody.className = \"tabBody tabBodySelected\";} else {pmdTab.className = \"tab\";pmdBody.className = \"tabBody tabBodyUnselected\";}if (tab == 'FORTIFY') {fortifyTab.className = \"tab tabSelected tabLast\";fortifyBody.className = \"tabBody tabBodySelected\";} else {fortifyTab.className = \"tab tabLast\";fortifyBody.className = \"tabBody tabBodyUnselected\";}}</script><style type=\"text/css\">.tab {border-left: 1px solid #28288A;border-right: 1px solid #28288A;border-top: 1px solid #28288A;height: 30px;width: 100px;text-align: center;vertical-align: middle;display: table-cell;cursor: pointer;}.tabFirst {border-radius: 5px 0px 0px 0px;}.tabLast {border-radius: 0px 5px 0px 0px;}.tabSelected {background-color: #28288A;color: white;}.tabBody {width: 100%;height: 90%;border: 1px solid #28288A;padding: 5px;}.tabBodySelected {display: block;}.tabBodyUnselected {display: none;}</style></head><body><div id=\"MAIN_tab\" class=\"tab tabSelected tabFirst\" onclick=\"changeTab('MAIN')\">Main</div><div id=\"PMD_tab\" class=\"tab\" onclick=\"changeTab('PMD')\">PMD</div><div id=\"FORTIFY_tab\" class=\"tab tabLast\" onclick=\"changeTab('FORTIFY')\">Fortify</div><div id=\"MAIN_body\" class=\"tabBody tabBodySelected\">{{MAIN_PLACEHOLDER}}</div><div id=\"PMD_body\" class=\"tabBody tabBodyUnselected\">{{PMD_PLACEHOLDER}}</div><div id=\"FORTIFY_body\" class=\"tabBody tabBodyUnselected\">{{FORTIFY_PLACEHOLDER}}</div></body></html>";
 	
 	private static String tableHeader = "<table style=\"width: 95%; border: #28288A 1px solid; margin: 3px;\">";
 	private static String tableFooter = "</table>";
 	
 	public static String createReport(Report blameReport) {
 		String pmdReport = "";
-		String findBugsReport = "";
+		String fortifyReport = "";
 		
 		String pmdMostGuilty = "";
-		String findBugsMostGuilty = "";
+		String fortifyMostGuilty = "";
 		
 		for (Subreport sr : blameReport.getSubreport()) {
 			if (ReportType.PMD == sr.getName()) {
@@ -27,20 +27,20 @@ public class ViewGenerator {
 				pmdMostGuilty = sr.getMostGuilty();
 			}
 			
-			if (ReportType.FIND_BUGS == sr.getName()) {
-				findBugsReport = createEntries(blameReport.getTimestamp().toGregorianCalendar().getTime(), sr);
-				findBugsMostGuilty = sr.getMostGuilty();
+			if (ReportType.FORTIFY == sr.getName()) {
+				fortifyReport = createEntries(blameReport.getTimestamp().toGregorianCalendar().getTime(), sr);
+				fortifyMostGuilty = sr.getMostGuilty();
 			}
 		}
 		
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<ul>");
 			buffer.append("<li>Leading PMD Violator is: <b>"+pmdMostGuilty+"</b></li>");
-			buffer.append("<li>Leading Find Bugs Violator is: <b>"+findBugsMostGuilty+"</b></li>");
+			buffer.append("<li>Leading Fortify Violator is: <b>"+fortifyMostGuilty+"</b></li>");
 		buffer.append("</ul>");
 		
 		
-		return page.replace("{{MAIN_PLACEHOLDER}}", buffer.toString()).replace("{{PMD_PLACEHOLDER}}", pmdReport).replace("{{FIND_BUGS_PLACEHOLDER}}", findBugsReport);
+		return page.replace("{{MAIN_PLACEHOLDER}}", buffer.toString()).replace("{{PMD_PLACEHOLDER}}", pmdReport).replace("{{FORTIFY_PLACEHOLDER}}", fortifyReport);
 	}
 	
 	public static String createEntries(Date dateOfReport, Subreport sr) {
